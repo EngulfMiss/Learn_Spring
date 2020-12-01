@@ -22,3 +22,14 @@
         </pluginManagement>
     </build>
 ```
+
+
+## 关于@Resource无法使用的解决方法
+```
+        <!--@Resource注解无法使用 需加入依赖-->
+        <dependency>
+                    <groupId>javax.annotation</groupId>
+                    <artifactId>javax.annotation-api</artifactId>
+                    <version>1.2</version>
+        </dependency>
+```
