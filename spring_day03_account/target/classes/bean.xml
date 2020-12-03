@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 配置Service -->
+    <bean id="acService" class="com.Engulf.service.impl.AccountServiceImpl">
+        <!-- 注入Dao对象 -->
+        <property name="accountDao" ref="acDao"></property>
+        <!-- 注入Transaction事务管理器 -->
+        <property name="tsManager" ref="tsManager"></property>
+    </bean>
+
+    <!-- 配置Dao对象 -->
+    <bean id="acDao" class="com.Engulf.dao.impl.AccountDaoImpl">
+        <!-- 注入QueryRunner对象 -->
+        <property name="runner" ref="QRunner"></property>
+        <!-- 注入ConnectionUtils -->
+        <property name="connectionUtils" ref="connectionUtils"></property>
+    </bean>
+
+    <!-- 配置QueryRunner对象 -->
+    <bean id="QRunner" class="org.apache.commons.dbutils.QueryRunner" scope="prototype">
+    </bean>
+
+    <!-- 配置数据源 -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <!-- 注入连接数据库的必备信息 -->
+        <property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/eesy?useSSL=false"></property>
+        <property name="user" value="root"></property>
+        <property name="password" value="52snowgnar"></property>
+    </bean>
+
+
+    <!-- 配置Connection工具类 ConnectionUtils -->
+    <bean id="connectionUtils" class="com.Engulf.utils.ConnectionUtils">
+        <!-- 注入数据源 -->
+        <property name="ds" ref="dataSource"></property>
+    </bean>
+
+
+    <!-- 配置事务管理器 Transaction -->
+    <bean id="tsManager" class="com.Engulf.utils.TransactionManager">
+        <!-- 注入ConnectionUtils -->
+        <property name="connectionUtils" ref="connectionUtils"></property>
+    </bean>
+</beans>
