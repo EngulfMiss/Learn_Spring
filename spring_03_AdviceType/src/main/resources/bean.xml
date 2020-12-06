@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!-- 配置spring的ioc，把service对象配置进来 -->
+    <bean id="acService" class="com.Engulf.service.impl.AccountServiceImpl"></bean>
+
+
+    <!-- 配置Logger类 -->
+    <bean id="logger" class="com.Engulf.util.Logger"></bean>
+    <!-- 配置AOP -->
+    <aop:config>
+        <!-- 配置切面 -->
+        <!-- 配置通知类型，并且建立通知方法和切入点方法的关联
+                method：通知方法
+                切入点方法(要增强的方法) com.Engulf.service.impl.AccountServiceImpl.saveAccount()
+            -->
+        <aop:aspect id="logAdvice" ref="logger"> <!-- 切面 -->
+            <!-- 前置通知 aop:before 在切入点方法之前执行
+            <aop:before method="beforePrintLog" pointcut-ref="pt1"></aop:before>-->
+            <!-- 后置通知 aop:after-returning 在切入点方法正常执行后执行 和 异常通知只会有一个存在
+            <aop:after-returning method="afterPrintLog" pointcut-ref="pt1"></aop:after-returning>-->
+            <!-- 异常通知 after-throwing 在切入点方法执行产生异常执行
+            <aop:after-throwing method="ThrowingPrintLog" pointcut-ref="pt1"></aop:after-throwing>-->
+            <!-- 最终通知 aop:after 无论切入点方法是否正常执行都会在其后面执行
+            <aop:after method="finalPrintLog" pointcut-ref="pt1"></aop:after>-->
+
+            <!-- 配置切入点表达式 id用于指定表达式的唯一标准 expression用于指定表达式内容
+                此标签写在aop:aspect标签内部只能当前标签使用
+                它还可以写在aop:aspect外面，此时就变成了所有切面可用，但要写在切面前
+            -->
+            <aop:pointcut id="pt1" expression="execution(* com.Engulf.service.impl.*.*(..))"/>
+
+
+            <!-- 配置环绕通知 详细注释请看Logger类-->
+            <aop:around method="aroundPrintLog" pointcut-ref="pt1"></aop:around>
+        </aop:aspect>
+    </aop:config>
+
+</beans>
