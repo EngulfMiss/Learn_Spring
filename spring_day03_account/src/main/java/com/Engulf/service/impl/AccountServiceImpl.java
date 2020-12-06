@@ -14,11 +14,6 @@ import java.util.List;
 public class AccountServiceImpl implements IAccountService {
 
     private IAccountDao accountDao;
-    private TransactionManager tsManager;
-
-    public void setTsManager(TransactionManager tsManager) {
-        this.tsManager = tsManager;
-    }
 
     public void setAccountDao(IAccountDao accountDao) {
         this.accountDao = accountDao;
@@ -58,6 +53,7 @@ public class AccountServiceImpl implements IAccountService {
          * 需要使用ThreadLocal对象把Connection和当前线程绑定，从而使一个
          * 线程中只有一个控制事务的对象
          */
+                System.out.println("transfer..........");
                 //2.1根据名称查询转出账户
                 Champion source = accountDao.findChampionByName(sourceName);
                 //2.2根据名称查询转入账户
@@ -70,7 +66,7 @@ public class AccountServiceImpl implements IAccountService {
                 accountDao.updateChampion(source);
 
                 //手动异常
-                int i = 1/0;
+//                int i = 1/0;
 
                 //2.6更新转入账户
                 accountDao.updateChampion(target);
