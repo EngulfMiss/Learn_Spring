@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!-- 配置Service -->
+    <bean id="acService" class="com.Engulf.service.impl.AccountServiceImpl">
+        <!-- 注入Dao对象 -->
+        <property name="accountDao" ref="acDao"></property>
+    </bean>
+
+    <!-- 配置Dao对象 -->
+    <bean id="acDao" class="com.Engulf.dao.impl.AccountDaoImpl">
+        <!-- 注入QueryRunner对象 -->
+        <property name="runner" ref="QRunner"></property>
+        <!-- 注入ConnectionUtils -->
+        <property name="connectionUtils" ref="connectionUtils"></property>
+    </bean>
+
+    <!-- 配置QueryRunner对象 -->
+    <bean id="QRunner" class="org.apache.commons.dbutils.QueryRunner" scope="prototype">
+    </bean>
+
+    <!-- 配置数据源 -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <!-- 注入连接数据库的必备信息 -->
+        <property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/eesy?useSSL=false"></property>
+        <property name="user" value="root"></property>
+        <property name="password" value="52snowgnar"></property>
+    </bean>
+
+
+    <!-- 配置Connection工具类 ConnectionUtils -->
+    <bean id="connectionUtils" class="com.Engulf.utils.ConnectionUtils">
+        <!-- 注入数据源 -->
+        <property name="ds" ref="dataSource"></property>
+    </bean>
+
+
+    <!-- 配置事务管理器 Transaction -->
+    <bean id="tsManager" class="com.Engulf.utils.TransactionManager">
+        <!-- 注入ConnectionUtils -->
+        <property name="connectionUtils" ref="connectionUtils"></property>
+    </bean>
+
+    <!-- 配置AOP -->
+    <aop:config>
+        <!-- 配置通用的切入点表达式 -->
+        <aop:pointcut id="pt1" expression="execution(* com.Engulf.service.impl.*.*(..))"/>
+        <aop:aspect id="txAdvice" ref="tsManager">
+            <!-- 配置前置通知:开启事务 -->
+            <aop:before method="beginTransaction" pointcut-ref="pt1"></aop:before>
+            <!-- 配置后置通知:提交事务 -->
+            <aop:after-returning method="commit" pointcut-ref="pt1"></aop:after-returning>
+            <!-- 配置异常通知:回滚事务 -->
+            <aop:after-throwing method="rollback" pointcut-ref="pt1"></aop:after-throwing>
+            <!-- 配置最终通知:释放连接 -->
+            <aop:after method="release" pointcut-ref="pt1"></aop:after>
+        </aop:aspect>
+    </aop:config>
+</beans>
