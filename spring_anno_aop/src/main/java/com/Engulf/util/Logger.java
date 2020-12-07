@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * 用于记录日志的工具类，里面提供了公共的方法
+ * 通知执行的顺序有些问题,前置通知->最终通知->后置通知/异常通知
+ * 建议使用环绕通知
  */
 
 @Component("logger")
